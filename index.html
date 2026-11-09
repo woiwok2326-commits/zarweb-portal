@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZarWeb | Premium Portal</title>
+    <!-- Font MCPE (Press Start 2P) & Font UI Modern (Outfit) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Icon pack -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #030712;
+            --primary: #0075ff;
+            --cyan: #00f0ff;
+            --purple: #8a2be2;
+            --glass-bg: rgba(15, 23, 42, 0.4);
+            --glass-border: rgba(0, 240, 255, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- BACKGROUND EFEK FLAGSHIP (Anti-Polos) --- */
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -2;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: rgba(0, 117, 255, 0.4); }
+        .orb-2 { bottom: -10%; right: -5%; width: 500px; height: 500px; background: rgba(138, 43, 226, 0.3); animation-delay: -5s; }
+        .orb-3 { top: 40%; left: 40%; width: 300px; height: 300px; background: rgba(0, 240, 255, 0.2); animation-duration: 15s; }
+
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- TYPOGRAPHY --- */
+        .mc-font {
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- LOGIN PAGE --- */
+        #login-page {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            animation: fadeIn 0.8s ease forwards;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+        }
+
+        #login-page h1 {
+            color: var(--cyan);
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(0,240,255,0.4);
+        }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .input-group input {
+            width: 100%; padding: 15px;
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: white; font-size: 16px; outline: none;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+
+        .btn-glow {
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--cyan));
+            border: none; border-radius: 12px; color: #000; font-weight: 800; font-size: 15px;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .btn-glow:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); }
+
+        .btn-outline {
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: transparent; border: 1px solid var(--text-muted);
+            border-radius: 12px; color: var(--text-main); font-weight: 600; font-size: 14px;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: white; }
+
+        .error-msg { color: #ff4757; font-size: 13px; margin-top: 10px; display: none; font-weight: 600; }
+
+        /* --- DASHBOARD PAGE --- */
+        #dashboard-page {
+            display: none; width: 100%; max-width: 1300px;
+            padding: 40px 20px; min-height: 100vh;
+            align-items: flex-start; animation: fadeIn 0.6s ease forwards;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; padding: 20px 30px;
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            border-radius: 20px; border: 1px solid var(--glass-border);
+        }
+
+        .header h1 { color: var(--cyan); font-size: 24px; text-shadow: 0 0 10px rgba(0,240,255,0.4); }
+
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-details { text-align: right; }
+        .user-details .name { font-weight: 800; font-size: 16px; }
+        .user-details .role { font-size: 12px; color: var(--cyan); letter-spacing: 1px; text-transform: uppercase; }
+        .user-avatar {
+            width: 45px; height: 45px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--purple), var(--primary));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 20px; border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        /* Upload Area (Hanya untuk Owner) */
+        .upload-area {
+            background: rgba(0, 117, 255, 0.05);
+            border: 2px dashed var(--primary); border-radius: 24px;
+            padding: 50px; text-align: center; cursor: pointer;
+            transition: all 0.3s ease; margin-bottom: 40px; position: relative; overflow: hidden;
+            display: none; /* Default hidden until logged in */
+        }
+        .upload-area:hover { background: rgba(0, 117, 255, 0.1); border-color: var(--cyan); transform: scale(1.005); }
+        .upload-area i { font-size: 40px; color: var(--cyan); margin-bottom: 15px; }
+
+        /* Progress Bar */
+        .progress-container { display: none; margin-top: 20px; width: 100%; background: rgba(0,0,0,0.5); border-radius: 10px; height: 6px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--purple), var(--cyan)); transition: width 0.2s ease; }
+
+        /* App Grid */
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; }
+
+        .app-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px;
+            display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .app-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); border-color: var(--glass-border); }
+
+        .app-header { display: flex; align-items: center; margin-bottom: 20px; }
+        .app-icon {
+            width: 70px; height: 70px; border-radius: 18px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 28px; color: white; font-weight: 800; margin-right: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+        .app-info h3 { font-size: 18px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
+        .app-info .version { font-size: 11px; background: rgba(0, 240, 255, 0.1); color: var(--cyan); padding: 4px 10px; border-radius: 8px; font-weight: 600; display: inline-block; }
+
+        .app-details {
+            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 20px;
+            font-size: 13px; color: var(--text-muted); display: grid; gap: 8px;
+        }
+        .app-details div { display: flex; justify-content: space-between; }
+        .app-details span { color: white; font-weight: 600; }
+
+        .btn-download {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main);
+            padding: 14px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; font-size: 14px;
+            transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-download:hover { background: var(--cyan); color: #000; border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+
+        /* Logout btn */
+        .btn-logout { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: 0.3s; padding: 10px; border-radius: 8px; }
+        .btn-logout:hover { color: #ff4757; background: rgba(255, 71, 87, 0.1); }
+    </style>
+</head>
+<body>
+
+    <!-- Background Animasi -->
+    <div class="bg-pattern"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- ================= LOGIN PAGE ================= -->
+    <div id="login-page">
+        <h1 class="mc-font">ZarWeb</h1>
+        <p style="color: var(--text-muted); margin-bottom: 35px; font-size: 14px;">Next-Gen Application Portal</p>
+        
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Owner ID..." autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Passcode...">
+        </div>
+        
+        <div class="error-msg" id="error-msg"><i class="fas fa-exclamation-triangle"></i> Access Denied!</div>
+        
+        <button class="btn-glow" onclick="checkLogin()">AUTHORIZE LOGIN <i class="fas fa-unlock-alt" style="margin-left: 5px;"></i></button>
+        <button class="btn-outline" onclick="skipLogin()">GUEST ACCESS <i class="fas fa-arrow-right" style="margin-left: 5px;"></i></button>
+    </div>
+
+    <!-- ================= DASHBOARD PAGE ================= -->
+    <div id="dashboard-page">
+        <div class="header">
+            <h1 class="mc-font"><i class="fas fa-layer-group" style="font-size: 20px; vertical-align: middle; margin-right: 5px;"></i> ZarWeb</h1>
+            <div class="user-profile">
+                <div class="user-details">
+                    <div class="name" id="profile-name">Guest</div>
+                    <div class="role" id="profile-role">Public Access</div>
+                </div>
+                <div class="user-avatar" id="profile-avatar">G</div>
+                <button class="btn-logout" onclick="location.reload()" title="Switch Account"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+
+        <!-- Area Upload (Hanya muncul jika login Owner) -->
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+            <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h2 style="font-size: 20px; margin-bottom: 5px;">Deploy Application</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Drag & Drop or click to browse (APK, ZIP, RAR)</p>
+            
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p id="upload-status" style="margin-top: 10px; font-size: 13px; color: var(--cyan); display: none;">Compiling Packages...</p>
+        </div>
+
+        <h2 style="margin-bottom: 25px; font-size: 18px; color: var(--text-main); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+            <i class="fas fa-rocket" style="color: var(--cyan); margin-right: 8px;"></i> Available Applications
+        </h2>
+        
+        <div class="app-grid" id="app-grid">
+            <!-- App Cards generate here -->
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Fungsi pembantu untuk bikin fake blob file (Biar guest tetep bisa ngerasain efek download)
+        function createDummyFile(name) {
+            const blob = new Blob([`Ini adalah file sistem untuk aplikasi ${name} - Generated by ZarWeb.`], {type: 'text/plain'});
+            return URL.createObjectURL(blob);
+        }
+
+        // Data Aplikasi Default (Biar web nggak kosong saat Guest masuk)
+        let appsData = [
+            { name: "EXAMPLE", ext: "ZIP", size: "1.2 GB", pkg: "com.zarweb.engine", ver: "v4.2.0", icon: "Z", bg: "linear-gradient(135deg, #FF416C, #FF4B2B)", downloadUrl: createDummyFile("ZarEngine_Pro.zip"), originalFileName: "ZarEngine_Pro_v4.2.0.zip" },
+            { name: "EXAMPLE", ext: "APK", size: "450 MB", pkg: "com.zarweb.cyber", ver: "v2.0.1", icon: "C", bg: "linear-gradient(135deg, #00B4DB, #0083B0)", downloadUrl: createDummyFile("CyberMod.apk"), originalFileName: "CyberMod_ZarWeb.apk" },
+            { name: "EXAMPLE", ext: "MCADDON", size: "85 MB", pkg: "com.zarweb.mcpe", ver: "v1.19.4", icon: "M", bg: "linear-gradient(135deg, #56AB2F, #A8E063)", downloadUrl: createDummyFile("MCPE_Shaders.mcaddon"), originalFileName: "MCPE_UltraShader.mcaddon" }
+        ];
+
+        // 1. SISTEM LOGIN
+        function openDashboard(isOwner) {
+            document.getElementById('login-page').style.display = 'none';
+            const dash = document.getElementById('dashboard-page');
+            dash.style.display = 'block';
+            document.body.style.alignItems = 'flex-start'; 
+
+            if (isOwner) {
+                // Tampilan Owner
+                document.getElementById('upload-area').style.display = 'block';
+                document.getElementById('profile-name').innerText = 'Owner Zan';
+                document.getElementById('profile-role').innerText = 'System Admin';
+                document.getElementById('profile-avatar').innerText = 'Z';
+            } else {
+                // Tampilan Guest
+                document.getElementById('upload-area').style.display = 'none';
+                document.getElementById('profile-name').innerText = 'Guest User';
+                document.getElementById('profile-role').innerText = 'Public Access';
+                document.getElementById('profile-avatar').innerText = 'G';
+                document.getElementById('profile-avatar').style.background = 'linear-gradient(135deg, #4b6cb7, #182848)';
+            }
+            renderApps();
+        }
+
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+            const btn = document.querySelector('.btn-glow');
+
+            if (user === 'Zan232' && pass === 'Zan123') {
+                errorMsg.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING';
+                btn.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.8)';
+                
+                setTimeout(() => openDashboard(true), 1200);
+            } else {
+                errorMsg.style.display = 'block';
+                const loginBox = document.getElementById('login-page');
+                loginBox.style.transform = 'translateX(10px)';
+                setTimeout(() => loginBox.style.transform = 'translateX(-10px)', 100);
+                setTimeout(() => loginBox.style.transform = 'translateX(0)', 200);
+            }
+        }
+
+        function skipLogin() {
+            const btn = document.querySelector('.btn-outline');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> LOADING SYSTEM';
+            setTimeout(() => openDashboard(false), 800);
+        }
+
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkLogin();
+        });
+
+        // 2. SISTEM UPLOAD (Sama dengan sebelumnya)
+        const uploadArea = document.getElementById('upload-area');
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = 'var(--cyan)'; });
+        uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = 'var(--primary)'; });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault(); uploadArea.style.borderColor = 'var(--primary)';
+            if (e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFileSelect(event) { if (event.target.files.length > 0) processFile(event.target.files[0]); }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024; const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function processFile(file) {
+            const progContainer = document.getElementById('progress-container');
+            const progBar = document.getElementById('progress-bar');
+            const status = document.getElementById('upload-status');
+            
+            progContainer.style.display = 'block'; status.style.display = 'block'; progBar.style.width = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100; clearInterval(interval);
+                    
+                    const fileNameNoExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                    const ext = file.name.split('.').pop().toUpperCase();
+                    const cleanName = fileNameNoExt.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const packageName = `com.zarweb.${cleanName || 'app'}`;
+                    const version = `v${Math.floor(Math.random()*4)+1}.${Math.floor(Math.random()*9)}.${Math.floor(Math.random()*20)}`;
+                    const iconLetter = fileNameNoExt.charAt(0).toUpperCase();
+                    
+                    const hue = Math.floor(Math.random() * 360);
+                    const bgGradient = `linear-gradient(135deg, hsl(${hue}, 80%, 40%), hsl(${hue}, 80%, 20%))`;
+                    const fileUrl = URL.createObjectURL(file);
+
+                    const newApp = {
+                        name: fileNameNoExt, ext: ext, size: formatBytes(file.size),
+                        pkg: packageName, ver: version, icon: iconLetter, bg: bgGradient,
+                        downloadUrl: fileUrl, originalFileName: file.name
+                    };
+
+                    appsData.unshift(newApp); // Tambahkan ke urutan pertama
+                    renderApps();
+
+                    setTimeout(() => {
+                        progContainer.style.display = 'none'; status.style.display = 'none';
+                        document.getElementById('file-input').value = ""; 
+                    }, 500);
+                }
+                progBar.style.width = progress + '%';
+            }, 150);
+        }
+
+        // 3. RENDER & DOWNLOAD OTOMATIS
+        function renderApps() {
+            const grid = document.getElementById('app-grid');
+            grid.innerHTML = '';
+
+            appsData.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'app-card';
+                card.innerHTML = `
+                    <div class="app-header">
+                        <div class="app-icon" style="background: ${app.bg}">${app.icon}</div>
+                        <div class="app-info">
+                            <h3 title="${app.name}">${app.name}</h3>
+                            <div class="version"><i class="fas fa-tag" style="margin-right:4px;"></i>${app.ver}</div>
+                        </div>
+                    </div>
+                    <div class="app-details">
+                        <div><span>Package</span> <span>${app.pkg}</span></div>
+                        <div><span>Format</span> <span>${app.ext}</span></div>
+                        <div><span>Size</span> <span>${app.size}</span></div>
+                    </div>
+                    <div class="btn-download" onclick="downloadApp('${app.downloadUrl}', '${app.originalFileName}', this)">
+                        <i class="fas fa-cloud-download-alt"></i> INSTALL
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function downloadApp(url, filename, btnElement) {
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> EXTRACTING...';
+            btnElement.style.background = 'rgba(255,255,255,0.1)';
+            
+            setTimeout(() => {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                btnElement.innerHTML = '<i class="fas fa-check"></i> INSTALLED';
+                btnElement.style.background = 'var(--cyan)';
+                btnElement.style.color = '#000';
+
+                setTimeout(() => {
+                    btnElement.innerHTML = originalText;
+                    btnElement.style.background = 'rgba(255,255,255,0.03)';
+                    btnElement.style.color = 'var(--text-main)';
+                }, 2500);
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
