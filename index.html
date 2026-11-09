@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZarWeb | Owner Portal</title>
+    <!-- Font ala MCPE/Minecraft untuk Logo dan Font Modern untuk UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Icon pack -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #060d1a;
+            --primary-blue: #0075ff;
+            --cyan-glow: #00e1ff;
+            --glass-bg: rgba(16, 25, 43, 0.6);
+            --glass-border: rgba(0, 225, 255, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #8ba3cb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 117, 255, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 225, 255, 0.15), transparent 25%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        .mc-font {
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- SATISFYING ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 15px rgba(0,225,255,0.2); } 50% { box-shadow: 0 0 30px rgba(0,225,255,0.5); } 100% { box-shadow: 0 0 15px rgba(0,225,255,0.2); } }
+        @keyframes scanline { 0% { top: 0; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        /* --- LOGIN PAGE --- */
+        #login-page {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeIn 0.8s ease forwards;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #login-page h1 {
+            color: var(--cyan-glow);
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0,225,255,0.5);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0, 117, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--cyan-glow);
+            box-shadow: 0 0 15px rgba(0, 225, 255, 0.2);
+        }
+
+        .btn-glow {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary-blue), var(--cyan-glow));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulseGlow 3s infinite;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+        
+        .btn-glow:active {
+            transform: translateY(2px);
+        }
+
+        .error-msg {
+            color: #ff4757;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* --- DASHBOARD PAGE --- */
+        #dashboard-page {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px 20px;
+            min-height: 100vh;
+            align-items: flex-start;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header h1 {
+            color: var(--cyan-glow);
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(0,225,255,0.4);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            background: var(--glass-bg);
+            border: 2px dashed var(--primary-blue);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            background: rgba(0, 117, 255, 0.1);
+            border-color: var(--cyan-glow);
+            transform: scale(1.01);
+        }
+
+        .upload-area i {
+            font-size: 50px;
+            color: var(--cyan-glow);
+            margin-bottom: 15px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--cyan-glow));
+            transition: width 0.3s ease;
+        }
+
+        /* App Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .app-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 117, 255, 0.2);
+            border-color: var(--cyan-glow);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .app-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            color: white;
+            font-weight: 800;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .app-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .app-info .version {
+            font-size: 12px;
+            background: rgba(0, 225, 255, 0.1);
+            color: var(--cyan-glow);
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .app-details {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .app-details div { margin-bottom: 5px; }
+        .app-details span { color: white; float: right; font-weight: 600; }
+
+        .btn-download {
+            background: transparent;
+            border: 1px solid var(--cyan-glow);
+            color: var(--cyan-glow);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-download:hover {
+            background: var(--cyan-glow);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 225, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= LOGIN PAGE ================= -->
+    <div id="login-page">
+        <h1 class="mc-font">ZarWeb</h1>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">System Authentication</p>
+        
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Enter username..." autocomplete="off">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter password...">
+        </div>
+        
+        <div class="error-msg" id="error-msg">Invalid Credentials!</div>
+        
+        <button class="btn-glow" style="margin-top: 20px;" onclick="checkLogin()">INITIALIZE <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <!-- ================= DASHBOARD PAGE ================= -->
+    <div id="dashboard-page">
+        <div class="header">
+            <h1 class="mc-font"><i class="fas fa-cube"></i> ZarWeb</h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="text-align: right;">
+                    <div style="font-weight: 800;">Owner Zan</div>
+                    <div style="font-size: 12px; color: var(--cyan-glow);">System Admin</div>
+                </div>
+                <div style="width: 45px; height: 45px; border-radius: 50%; background: var(--primary-blue); display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--cyan-glow);">Z</div>
+            </div>
+        </div>
+
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+            <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h2>Drag & Drop Game/App Here</h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">or click to browse your files (APK, EXE, ZIP, etc)</p>
+            
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p id="upload-status" style="margin-top: 10px; font-size: 14px; color: var(--cyan-glow); display: none;">Extracting Packages...</p>
+        </div>
+
+        <h2 style="margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-server"></i> Deployed Applications
+        </h2>
+        
+        <div class="app-grid" id="app-grid">
+            <!-- App Cards will be generated here -->
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script>
+        // Data penyimpanan sementara aplikasi
+        let appsData = [];
+
+        // 1. SISTEM LOGIN
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+            const btn = document.querySelector('.btn-glow');
+
+            if (user === 'Zan232' && pass === 'Zan123') {
+                errorMsg.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ACCESS GRANTED';
+                btn.style.background = '#00d8d6';
+                
+                setTimeout(() => {
+                    document.getElementById('login-page').style.display = 'none';
+                    const dash = document.getElementById('dashboard-page');
+                    dash.style.display = 'block';
+                    document.body.style.alignItems = 'flex-start'; // Adjust layout for dashboard
+                }, 1000);
+            } else {
+                errorMsg.style.display = 'block';
+                document.getElementById('login-page').style.transform = 'translateX(10px)';
+                setTimeout(() => document.getElementById('login-page').style.transform = 'translateX(-10px)', 100);
+                setTimeout(() => document.getElementById('login-page').style.transform = 'translateX(0)', 200);
+            }
+        }
+
+        // Tangkap tombol Enter saat login
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkLogin();
+        });
+
+        // 2. SISTEM UPLOAD & DRAG DROP
+        const uploadArea = document.getElementById('upload-area');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                processFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function handleFileSelect(event) {
+            if (event.target.files.length > 0) {
+                processFile(event.target.files[0]);
+            }
+        }
+
+        // Format Byte ke MB / GB
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 3. PROSES EKSTRAKSI (Simulasi Cerdas) & PEMBUATAN LINK
+        function processFile(file) {
+            // Tampilkan animasi loading/progress bar yang satisfying
+            const progContainer = document.getElementById('progress-container');
+            const progBar = document.getElementById('progress-bar');
+            const status = document.getElementById('upload-status');
+            
+            progContainer.style.display = 'block';
+            status.style.display = 'block';
+            progBar.style.width = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // --- Auto Detect & Ekstrak Data ---
+                    const fileNameNoExt = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                    const ext = file.name.split('.').pop().toUpperCase();
+                    
+                    // Auto generate Package Name dari nama file
+                    const cleanName = fileNameNoExt.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const packageName = `com.zarweb.${cleanName || 'app'}`;
+                    
+                    // Auto generate Random Version agar terlihat real
+                    const version = `v${Math.floor(Math.random()*4)+1}.${Math.floor(Math.random()*9)}.${Math.floor(Math.random()*20)}`;
+                    
+                    // Buat icon dari huruf pertama
+                    const iconLetter = fileNameNoExt.charAt(0).toUpperCase();
+
+                    // MAGIC: Buat Blob Object URL untuk Direct Download tanpa server!
+                    const fileUrl = URL.createObjectURL(file);
+
+                    const newApp = {
+                        name: fileNameNoExt,
+                        ext: ext,
+                        size: formatBytes(file.size),
+                        pkg: packageName,
+                        ver: version,
+                        icon: iconLetter,
+                        downloadUrl: fileUrl,
+                        originalFileName: file.name
+                    };
+
+                    appsData.push(newApp);
+                    renderApps();
+
+                    // Reset UI Upload
+                    setTimeout(() => {
+                        progContainer.style.display = 'none';
+                        status.style.display = 'none';
+                        document.getElementById('file-input').value = ""; // reset input
+                    }, 500);
+                }
+                progBar.style.width = progress + '%';
+            }, 150);
+        }
+
+        // 4. RENDER GAME KE LAYAR & FUNGSI DOWNLOAD OTOMATIS
+        function renderApps() {
+            const grid = document.getElementById('app-grid');
+            grid.innerHTML = '';
+
+            // Reverse agar yang baru diupload tampil di awal
+            [...appsData].reverse().forEach((app, index) => {
+                // Generate gradient warna acak yang keren untuk icon
+                const hue = Math.floor(Math.random() * 360);
+                const bgIcon = `linear-gradient(135deg, hsl(${hue}, 80%, 30%), hsl(${hue}, 80%, 50%))`;
+
+                const card = document.createElement('div');
+                card.className = 'app-card';
+                card.innerHTML = `
+                    <div class="app-header">
+                        <div class="app-icon" style="background: ${bgIcon}">${app.icon}</div>
+                        <div class="app-info">
+                            <h3 title="${app.name}">${app.name}</h3>
+                            <div class="version"><i class="fas fa-tag"></i> ${app.ver}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="app-details">
+                        <div>Package: <span>${app.pkg}</span></div>
+                        <div>Format: <span>${app.ext}</span></div>
+                        <div>Size: <span>${app.size}</span></div>
+                    </div>
+
+                    <!-- Tombol Download Bar -->
+                    <div class="btn-download" onclick="downloadApp('${app.downloadUrl}', '${app.originalFileName}', this)">
+                        <i class="fas fa-download"></i> INSTALL / DOWNLOAD
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Fungsi klik download (Terunduh otomatis tanpa pindah link/tab)
+        function downloadApp(url, filename, btnElement) {
+            // Efek tombol saat di klik
+            const originalText = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> DOWNLOADING...';
+            btnElement.style.background = 'var(--cyan-glow)';
+            btnElement.style.color = '#000';
+
+            // Proses trigger download (Murni JS HTML5)
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename; // Ini yang memaksa file otomatis terunduh dengan nama aslinya
+            document.body.appendChild(a);
+            a.click(); // Klik link secara ghaib
+            document.body.removeChild(a);
+
+            // Kembalikan status tombol
+            setTimeout(() => {
+                btnElement.innerHTML = '<i class="fas fa-check"></i> DOWNLOADED';
+                setTimeout(() => {
+                    btnElement.innerHTML = originalText;
+                    btnElement.style.background = 'transparent';
+                    btnElement.style.color = 'var(--cyan-glow)';
+                }, 2000);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
